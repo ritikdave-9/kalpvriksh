@@ -5,6 +5,8 @@
 
 #define size 100
 
+#define DELETED (Node *)(-1)
+
 typedef struct Node
 {
     char *key;
@@ -15,7 +17,6 @@ typedef struct HashMap
 {
     Node *table[size];
     int total_filled;
-
 } HashMap;
 
 Node *createNode(char *key, int value)
@@ -40,20 +41,16 @@ HashMap *createMap()
 unsigned int hash1(char *key)
 {
     unsigned int index = 0;
-
     for (int i = 0; i < strlen(key); i++)
     {
-
-        index <<= 5;
-        index += key[i];
+        index = (index << 5) + key[i];
     }
     return index % size;
 }
+
 unsigned int hash2(unsigned int h1)
 {
-
-    h1 << 6;
-
+    h1 = (h1 << 6);
     return h1 % size;
 }
 
@@ -67,20 +64,15 @@ void insertLinearProbing(HashMap *hm, char *key, int val)
         return;
     }
 
-    while (hm->table[index] != NULL)
+    while (hm->table[index] != NULL && hm->table[index] != DELETED)
     {
-
         if (strcmp(hm->table[index]->key, key) == 0)
         {
             hm->table[index]->value = val;
             return;
         }
 
-        index++;
-        if (index == size)
-        {
-            index = 0;
-        }
+        index = (index + 1) % size;
     }
 
     hm->table[index] = createNode(strdup(key), val);
@@ -92,86 +84,75 @@ void delete_linear_probing(HashMap *hm, char *key)
     unsigned int index = hash1(key);
     while (hm->table[index])
     {
-        if (strcmp(hm->table[index]->key, key) == 0)
-        {            free(hm->table[index]->key);
-
+        if (hm->table[index] != DELETED && strcmp(hm->table[index]->key, key) == 0)
+        {
+            free(hm->table[index]->key);
             free(hm->table[index]);
-            hm->table[index] = NULL;
+            hm->table[index] = DELETED;
             printf("\ndeleted\n");
             hm->total_filled--;
             return;
-
-            unsigned int nextIndex = index+1;
-            while(hm->table[nextIndex]){
-                Node*temp = hm->table[nextIndex];
-                free(hm->table[nextIndex]->key);
-                free(hm->table[nextIndex]);
-                insertLinearProbing(hm,temp->key,temp->value);
-                free(temp->key);
-                free(temp);
-                nextIndex = (nextIndex+1)%size;
-                
-            }  
-        index = (index+1)%size;
+        }
+        index = (index + 1) % size;
     }
-}
     printf("\nnot found key\n");
     return;
 }
+
 int search_linear_probing(HashMap *hm, char *key)
 {
     unsigned int index = hash1(key);
     while (hm->table[index])
     {
-        if (strcmp(hm->table[index]->key, key) == 0)
+        if (hm->table[index] != DELETED && strcmp(hm->table[index]->key, key) == 0)
         {
             return hm->table[index]->value;
         }
-        index++;
+        index = (index + 1) % size;
     }
     return -1;
 }
 
-int main() {
+void printTable(HashMap *hm)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (hm->table[i] != NULL && hm->table[i] != DELETED)
+        {
+            printf("%s : %d\n", hm->table[i]->key, hm->table[i]->value);
+        }
+    }
+}
+
+int main()
+{
     HashMap *hm = createMap();
 
-    
-    char* key1 = "key1";
+    char *key1 = "key1";
     int val1 = 10;
     insertLinearProbing(hm, key1, val1);
     printf("Inserted value: %d\n", hm->table[hash1(key1)]->value);
     printf("Search value: %d\n", search_linear_probing(hm, key1));
 
-    
-    char* key2 = "key2"; 
+    char *key2 = "key2";
     int val2 = 20;
     insertLinearProbing(hm, key2, val2);
     printf("Inserted value (key2): %d\n", search_linear_probing(hm, key2));
 
-    
     int newVal1 = 30;
     insertLinearProbing(hm, key1, newVal1);
     printf("Updated value (key1): %d\n", search_linear_probing(hm, key1));
 
-    
-    char* key3 = "key3"; 
+    char *key3 = "key3";
     delete_linear_probing(hm, key3);
 
-    
     delete_linear_probing(hm, key1);
     printf("Search after delete (key1): %d\n", search_linear_probing(hm, key1));
-    printf("Search after delete (key2): %d\n", search_linear_probing(hm, key2));
+    printf("Search after delete (key3): %d\n", search_linear_probing(hm, key3));
 
-    
-    for (int i = 0; i < size; i++) {
-        char tempKey[10];
-        snprintf(tempKey, 10, "key%d", i + 4); 
-        insertLinearProbing(hm, tempKey, i + 100);
-    }
+    printTable(hm);
+
     printf("Table full test completed.\n");
-
-    
-    
 
     return 0;
 }
