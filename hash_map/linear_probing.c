@@ -48,11 +48,7 @@ unsigned int hash1(char *key)
     return index % size;
 }
 
-unsigned int hash2(unsigned int h1)
-{
-    h1 = (h1 << 6);
-    return h1 % size;
-}
+
 
 void insertLinearProbing(HashMap *hm, char *key, int val)
 {

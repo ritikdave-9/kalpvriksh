@@ -5,6 +5,8 @@
 
 #define size 100
 
+#define DELETED (Node*)(-1)
+
 typedef struct Node
 {
     char *key;
@@ -68,7 +70,7 @@ void insertQuardaticProbing(HashMap *hm, char *key, int val)
     }
     int i = 1;
 
-    while (hm->table[index] != NULL)
+    while (hm->table[index] != NULL&&hm->table[index]!=DELETED)
     {
 
         if (strcmp(hm->table[index]->key, key) == 0)
@@ -94,45 +96,43 @@ void delete_Quardatic_probing(HashMap *hm, char *key)
     int i = 1;
     while (hm->table[index])
     {
-        if (strcmp(hm->table[index]->key, key) == 0)
+        if (hm->table[index]!=DELETED&&strcmp(hm->table[index]->key, key) == 0)
         {            free(hm->table[index]->key);
 
             free(hm->table[index]);
-            hm->table[index] = NULL;
+            hm->table[index] = DELETED;
             printf("\ndeleted\n");
             hm->total_filled--;
             return;
 
-            unsigned int nextIndex = index+1;
-            while(hm->table[nextIndex]){
-                Node*temp = hm->table[nextIndex];
-                free(hm->table[nextIndex]->key);
-                free(hm->table[nextIndex]);
-                insertQuardaticProbing(hm,temp->key,temp->value);
-                free(temp->key);
-                free(temp);
-                nextIndex = (nextIndex+1)%size;
-                
+           
             }  
         index = (index+i*i)%size;
     }
-}
+
     printf("\nnot found key\n");
-    return;
 }
-int search_Quardatic_probing(HashMap *hm, char *key)
+int search_Quardatic_probing(HashMap *hm , char *key)
 {
     unsigned int index = hash1(key);
     int i = 0;
     while (hm->table[index])
     {
-        if (strcmp(hm->table[index]->key, key) == 0)
+        if (hm->table[index]!=DELETED&&strcmp(hm->table[index]->key, key) == 0)
         {
             return hm->table[index]->value;
         }
         index = (index+i*i)%size;
     }
     return -1;
+}
+
+void printTable(HashMap*hm){
+    for(int i = 0;i<size;i++){
+        if(hm->table[i]!=NULL){
+            printf("%s : %d\n",hm->table[i]->key,hm->table[i]->value);
+        }
+    }
 }
 
 int main() {
@@ -163,7 +163,7 @@ int main() {
     
     delete_Quardatic_probing(hm, key1);
     printf("Search after delete (key1): %d\n", search_Quardatic_probing(hm, key1));
-    printf("Search after delete (key2): %d\n", search_Quardatic_probing(hm, key2));
+    printf("Search after delete (key3): %d\n", search_Quardatic_probing(hm, key3));
 
     
     for (int i = 0; i < size; i++) {
@@ -172,6 +172,8 @@ int main() {
         insertQuardaticProbing(hm, tempKey, i + 100);
     }
     printf("Table full test completed.\n");
+
+    printTable(hm);
 
     
     

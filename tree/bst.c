@@ -1,195 +1,161 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-typedef struct node
-{
-    int data;
-    struct node *left;
-    struct node *right;
+typedef struct Node {
+  int data;
+  struct Node *left;
+  struct Node *right;
 
-} node;
+} Node;
 
-node *createNode(int data)
-{
-    node *newnode = (node *)malloc(sizeof(node));
-    newnode->data = data;
-    newnode->left = NULL;
-    newnode->right = NULL;
-    return newnode;
+Node *createNode(int data) {
+  Node *newNode = (Node *)malloc(sizeof(Node));
+  newNode->data = data;
+  newNode->left = NULL;
+  newNode->right = NULL;
+  return newNode;
 }
-int power(int base, int exponent)
-{
-    int result = 1;
-    for (int i = 0; i < exponent; i++)
-    {
-        result *= base;
-    }
-    return result;
+int power(int base, int exponent) {
+  int result = 1;
+  for (int i = 0; i < exponent; i++) {
+    result *= base;
+  }
+  return result;
 }
-node *insert(node *root, int data)
-{
-    if (!root)
-    {
-        return createNode(data);
-    }
+Node *insert(Node *root, int data) {
+  if (!root) {
+    return createNode(data);
+  }
 
-    if (data < root->data)
-    {
-        root->left = insert(root->left, data);
-    }
-    else
-    {
-        root->right = insert(root->right, data);
-    }
+  if (data < root->data) {
+    root->left = insert(root->left, data);
+  } else {
+    root->right = insert(root->right, data);
+  }
 
-    return root;
+  return root;
 }
 
-node *create_bst()
-{
-    node *root = NULL;
+Node *create_bst() {
+  Node *root = NULL;
 
-    while (1)
-    {
-        int n;
-        scanf("%d", &n);
-        if (n == -1)
-        {
-            return root;
-        }
-
-        root = insert(root, n);
+  while (1) {
+    int n;
+    scanf("%d", &n);
+    if (n == -1) {
+      return root;
     }
 
-    return root;
+    root = insert(root, n);
+  }
+
+  return root;
 }
 
-int height(node *root)
-{
-    if (!root)
-    {
-        return -1;
-    }
+int height(Node *root) {
+  if (!root) {
+    return 0;
+  }
 
-    int left = height(root->left);
-    int right = height(root->right);
+  int left = height(root->left);
+  int right = height(root->right);
 
-    return (left > right) ? left + 1 : right + 1;
+  return (left > right) ? left + 1 : right + 1;
 }
 
-int total_elements(node *root)
-{
-    if (!root)
-    {
-        return 0;
-    }
-    return total_elements(root->left) + total_elements(root->right) + 1;
+int total_elements(Node *root) {
+  if (!root) {
+    return 0;
+  }
+  return total_elements(root->left) + total_elements(root->right) + 1;
 }
-void inorderUtils(node *root, int *array, int *index)
-{
-    if (!root)
-    {
-        return;
-    }
+void inorderUtils(Node *root, int *array, int *index) {
+  if (!root) {
+    return;
+  }
 
-    inorderUtils(root->left, array, index);
-    array[*index] = root->data;
-    (*index)++;
-    inorderUtils(root->right, array, index);
+  inorderUtils(root->left, array, index);
+  array[*index] = root->data;
+  (*index)++;
+  inorderUtils(root->right, array, index);
 }
-int * inorder(node* root){
-    int index = 0;
-    int * array = (int * )calloc(sizeof(int),total_elements(root)+1);
-    inorderUtils(root,array,&index);
+int *inorder(Node *root) {
+  int index = 0;
+  int *array = (int *)calloc(sizeof(int), total_elements(root) + 1);
+  inorderUtils(root, array, &index);
 
-    return array;
-
-
+  return array;
 }
-void preorderUtils(node *root, int *array, int *index)
-{
-    if (!root)
-    {
-        return;
-    }
+void preorderUtils(Node *root, int *array, int *index) {
+  if (!root) {
+    return;
+  }
 
-    array[*index] = root->data;
-    (*index)++;
-    inorderUtils(root->left, array, index);
-    inorderUtils(root->right, array, index);
+  array[*index] = root->data;
+  (*index)++;
+  inorderUtils(root->left, array, index);
+  inorderUtils(root->right, array, index);
 }
-int * preorder(node* root){
-    int index = 0;
-    int * array = (int * )calloc(sizeof(int),total_elements(root)+1);
-    preorderUtils(root,array,&index);
+int *preorder(Node *root) {
+  int index = 0;
+  int *array = (int *)calloc(sizeof(int), total_elements(root) + 1);
+  preorderUtils(root, array, &index);
 
-    return array;
-
-
+  return array;
 }
-void postorderUtils(node *root, int *array, int *index)
-{
-    if (!root)
-    {
-        return;
-    }
+void postorderUtils(Node *root, int *array, int *index) {
+  if (!root) {
+    return;
+  }
 
-    inorderUtils(root->left, array, index);
-    inorderUtils(root->right, array, index);
-    array[*index] = root->data;
-    (*index)++;
+  inorderUtils(root->left, array, index);
+  inorderUtils(root->right, array, index);
+  array[*index] = root->data;
+  (*index)++;
 }
-int * postorder(node* root){
-    int index = 0;
-    int * array = (int * )calloc(sizeof(int),total_elements(root)+1);
-    postorderUtils(root,array,&index);
+int *postorder(Node *root) {
+  int index = 0;
+  int *array = (int *)calloc(sizeof(int), total_elements(root) + 1);
+  postorderUtils(root, array, &index);
 
-    return array;
-
-
+  return array;
 }
 
-typedef struct stack
-{
-    int top;
-    int size;
-    node **array;
+typedef struct stack {
+  int top;
+  int size;
+  Node **array;
 } stack;
 
-stack *createStack(int size)
-{
-    stack *newstack = (stack *)malloc(sizeof(stack));
-    newstack->size = size;
-    newstack->top = -1;
-    newstack->array = (node **)malloc(sizeof(node *) * size);
-    return newstack;
+stack *createStack(int size) {
+  stack *newstack = (stack *)malloc(sizeof(stack));
+  newstack->size = size;
+  newstack->top = -1;
+  newstack->array = (Node **)malloc(sizeof(Node *) * size);
+  return newstack;
 }
 
-void push(stack *st, node *temp)
-{
-    st->top++;
-    st->array[st->top] = temp;
+void push(stack *st, Node *temp) {
+  st->top++;
+  st->array[st->top] = temp;
 }
 
-void print_array(int *array, int size)
-{
-    printf("\n");
-    for (int i = 0; i < size; i++)
-    {
-        if (array[i] == 0)
-        {
-            break;
-        }
-        printf("%d, ", array[i]);
-    }
-    printf("\n");
+void print_array(int *array, int size) {
+  printf("\n");
+  for (int i = 0; i < size; i++) {
+    // if (array[i] == 0)
+    // {
+    //     break;
+    // }
+    printf("%d, ", array[i]);
+  }
+  printf("\n");
 }
 
 // ===================================================================
 // NOT CLEAR THE PROBLEM STATEMENT
 
-// void width_utils(node* root, int * left, int * right, int  n){
+// void width_utils(Node* root, int * left, int * right, int  n){
 //     if(!root){
 //         return ;
 //     }
@@ -207,7 +173,7 @@ void print_array(int *array, int size)
 
 // }
 
-// int width_of_tree(node* root){
+// int width_of_tree(Node* root){
 //     int left = 0;
 //     int right = 0;
 
@@ -216,126 +182,458 @@ void print_array(int *array, int size)
 
 // }
 
-int max(int a, int b)
-{
-    return a > b ? a : b;
+int max(int a, int b) { return a > b ? a : b; }
+
+int most_left(Node *root) {
+  if (!root->left) {
+    return root->data;
+  }
+
+  return most_left(root->left);
+}
+int most_right(Node *root) {
+
+  if (!root->right) {
+    return root->data;
+  }
+
+  return most_right(root->right);
+}
+int predecissor(Node *root) {
+  if (!root || !root->left) {
+    return -1;
+  }
+
+  return most_right(root->left);
 }
 
-int most_left(node *root)
-{
-    if (!root->left)
-    {
-        return root->data;
-    }
+int successor(Node *root) {
+  if (!root || !root->right) {
+    return -1;
+  }
 
-    return most_left(root->left);
+  return most_left(root->right);
 }
-int most_right(node *root)
-{
+int diameter(Node *root) {
+  if (!root) {
+    return 0;
+  }
+  int left_height = height(root->left);
+  int right_height = height(root->right);
+  int left_diam = diameter(root->left);
+  int right_diam = diameter(root->right);
 
-    if (!root->right)
-    {
-        return root->data;
-    }
-
-    return most_right(root->right);
-}
-int predecissor(node *root)
-{
-    if (!root || !root->left)
-    {
-        return -1;
-    }
-
-    return most_right(root->left);
+  return max(left_height + right_height, max(left_diam, right_diam));
 }
 
-int successor(node *root)
-{
-    if (!root || !root->right)
-    {
-        return -1;
-    }
+int valid_bst_using_inorder(Node *root) {
+  int total = total_elements(root);
+  int *array = inorder(root);
+  int index = 0;
 
-    return most_left(root->right);
-}
-int diameter(node *root)
-{
-    if (!root)
-    {
-        return 0;
-    }
-    int left_height = height(root->left);
-    int right_height = height(root->right);
-    int left_diam = diameter(root->left);
-    int right_diam = diameter(root->right);
+  for (int i = 0; i < total - 1; i++) {
+    if (array[i] > array[i + 1]) {
+      print_array(array, total);
+      free(array);
 
-    return max(left_height + right_height, max(left_diam, right_diam));
+      return 0;
+    }
+  }
+
+  print_array(array, total);
+  free(array);
+
+  return 1;
 }
 
-int valid_bst_using_inorder(node *root)
-{
-    int total = total_elements(root);
-    int *array = inorder(root);
-    int index = 0;
-    
+void mirror(Node *root) {
+  if (!root) {
+    return;
+  }
+  mirror(root->left);
+  mirror(root->right);
 
-    for (int i = 0; i < total - 1; i++)
-    {
-        if (array[i] > array[i + 1])
-        {
-            print_array(array, total);
-            free(array);
+  Node *temp = root->left;
+  root->left = root->right;
+  root->right = temp;
+}
 
-            return 0;
-        }
-    }
+int pathUtils(Node *root, int *array, int *index, int val) {
 
-    print_array(array, total);
-    free(array);
-
+  if (!root) {
+    return 0;
+  }
+  if (root->data == val) {
+    array[*index] = val;
+    (*index)++;
     return 1;
+  }
+
+  int l = pathUtils(root->left, array, index, val);
+  int r = pathUtils(root->right, array, index, val);
+
+  if (l || r) {
+    array[(*index)++] = root->data;
+    return 1;
+  }
+
+  return 0;
 }
 
-void mirror(node *root)
-{
-    if (!root)
-    {
-        return;
+int *path(Node *root, int val) {
+  int h = height(root);
+  int *array = (int *)calloc(sizeof(int), h + 1);
+  int index = 0;
+
+  int n = pathUtils(root, array, &index, val);
+
+  return array;
+}
+
+int lca(Node *root, int a, int b) {
+  int *pathA = path(root, a);
+  int *pathB = path(root, b);
+
+  int h = height(root);
+  int i = 0;
+  while (pathA[i] != 0) {
+    i++;
+  }
+  int j = 0;
+  while (pathB[j] != 0) {
+    j++;
+  }
+  int lca = -1;
+  while (i >= 0 && j >= 0 && pathA[i] == pathB[j]) {
+    lca = pathA[i];
+    i--;
+    j--;
+  }
+
+  return lca;
+}
+
+typedef struct qNode {
+  Node *value;
+  struct qNode *next;
+
+} qNode;
+
+qNode *createQNode(Node *value) {
+
+  qNode *newNode = (qNode *)malloc(sizeof(qNode));
+  newNode->value = value;
+  newNode->next = NULL;
+  return newNode;
+}
+
+typedef struct queue {
+  qNode *start;
+  qNode *end;
+} queue;
+
+queue *createQueue() {
+  queue *newqueue = (queue *)malloc(sizeof(queue));
+  newqueue->start = NULL;
+  newqueue->end = NULL;
+  return newqueue;
+}
+
+void pushqueue(queue *q, Node *node) {
+  qNode *newnode = createQNode(node);
+
+  if (!q->end) {
+
+    q->start = newnode;
+    q->end = newnode;
+  } else {
+    q->end->next = newnode;
+  }
+}
+
+Node *pop(queue *q) {
+  Node *temp = q->start->value;
+  qNode *start = q->start;
+  q->start = q->start->next;
+  free(start);
+
+  return temp;
+}
+
+Node *queueTop(queue *q) { return q->start->value; }
+
+void printLevelInTree(Node *root, int level) {
+  if (!root) {
+    return;
+  }
+  if (level == 1) {
+    printf("%d ", root->data);
+  } else if (level > 1) {
+    printLevelInTree(root->left, level - 1);
+
+    printLevelInTree(root->right, level - 1);
+  }
+}
+
+void printLevelOrder(Node *root) {
+  int h = height(root);
+  for (int i = 1; i < h + 1; i++) {
+    printLevelInTree(root, i);
+    printf("\n");
+  }
+}
+
+int leafCount(Node *root) {
+  if (!root) {
+    return 0;
+  }
+  if (!root->left && !root->right) {
+    return 1;
+  }
+
+  return leafCount(root->left) + leafCount(root->right);
+}
+
+int checkBalanced(Node *root) {
+
+  if (!root) {
+    return 1;
+  }
+
+  int left_height = height(root->left);
+  int right_height = height(root->right);
+
+  return (abs(left_height - right_height) <= 1 && checkBalanced(root->left) &&
+          checkBalanced(root->right));
+}
+
+Node *copyTree(Node *root) {
+  if (!root) {
+    return NULL;
+  }
+
+  Node *newTree = createNode(root->data);
+  newTree->left = copyTree(root->left);
+  newTree->right = copyTree(root->right);
+  return newTree;
+}
+
+void spiral(Node *root) {
+
+  Node *mir = copyTree(root);
+
+  mirror(mir);
+
+  int h = height(root);
+
+  for (int i = 1; i <= h; i++) {
+    if (i % 2 == 1) {
+      printLevelInTree(root, i);
+      printf("\n");
+    } else {
+      printLevelInTree(mir, i);
+      printf("\n");
     }
-    mirror(root->left);
-    mirror(root->right);
-
-    node *temp = root->left;
-    root->left = root->right;
-    root->right = temp;
+  }
 }
-int main()
-{
-    node *root = create_bst();
 
-    // printf("%d",h);
+int checkIdentical(Node *root1, Node *root2) {
+  if (!root1 && !root2) {
+    return 1;
+  } else if (!root1 || !root2) {
+    return 0;
+  }
 
-    // printf("%d",root->data);
+  if (root1->data == root2->data && checkIdentical(root1->left, root2->left) &&
+      checkIdentical(root1->right, root2->right)) {
+    return 1;
+  }
 
-    int *array =   inorder(root);
+  return 0;
+}
 
-    int index = 0;
+void verticleElements(Node *root, int *array, int l, int curr) {
+  if (!root) {
+
+    return;
+  }
+  if (curr == l) {
+    *array = root->data;
+    array++;
+  }
+  verticleElements(root->right, array, l, curr + 1);
+  verticleElements(root->left, array, l, curr - 1);
+}
+int *verticleOrderTraversal(Node *root, int l) {
+
+  int *array = (int *)calloc(sizeof(int), 20);
+
+  verticleElements(root, array, l, 0);
+  return array;
+}
+
+void leftviewUtils(Node *root, int *array, int *level, int current) {
+  if (!root) {
+    return;
+  }
+
+  if (current == *level) {
+    array[current] = root->data;
+    (*level)++;
+  }
+
+  leftviewUtils(root->left, array, level, current + 1);
+  leftviewUtils(root->right, array, level, current + 1);
+}
+
+int *leftView(Node *root) {
+  int level = 0;
+  int h = height(root);
+  int *array = (int *)calloc(sizeof(int), h);
+
+  leftviewUtils(root, array, &level, 0);
+
+  return array;
+}
+
+void rightviewUtils(Node *root, int *array, int *level, int current) {
+  if (!root) {
+    return;
+  }
+
+  if (current == *level) {
+    array[current] = root->data;
+    (*level)++;
+  }
+
+  rightviewUtils(root->right, array, level, current + 1);
+  rightviewUtils(root->left, array, level, current + 1);
+}
+
+int *rightView(Node *root) {
+  int level = 0;
+  int h = height(root);
+  int *array = (int *)calloc(sizeof(int), h);
+
+  rightviewUtils(root, array, &level, 0);
+
+  return array;
+}
+
+int search_in_array(int *arr, int start, int end, int element) {
+  for (int i = start; i <= end; i++) {
+    if (arr[i] == element) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+Node *convert_to_binary_tree(int *pre, int *in, int instart, int inend,
+                             int *index) {
+
+  if (instart > inend) {
+    return NULL;
+  }
+  Node *root = createNode(pre[*(index)]);
+  (*index)++;
+
+  if (instart == inend) {
+    return root;
+  }
+
+  int pos = search_in_array(in, instart, inend, root->data);
+
+  root->left = convert_to_binary_tree(pre, in, instart, pos - 1, index);
+
+  root->right = convert_to_binary_tree(pre, in, pos + 1, inend, index);
+
+  return root;
+}
+
+int compare(Node *root1, Node *root2) {
+  if (!root1 && !root2) {
+    return 1;
+  }
+  if (!root1 || !root2) {
+    return 0;
+  }
+
+  return (root1->data == root2->data) && compare(root1->left, root2->left) &&
+         compare(root1->right, root2->right);
+}
+
+void delete_in_bst(Node *root, int data) {
+  if (!root) {
+    return;
+  }
+  if (root->left&&root->left->data == data) {
+    Node *temp = root->left;
+    root->left = (root->left->left!=NULL) ? root->left->left : root->left->right;
+
+    Node* temp2 = root->left;
 
 
-    int total = total_elements(root);
+    if(temp2){
+    while (temp2->right) {
+      temp2 = temp2->right;
+    
+    }
 
-    printf("%d", total);
+    temp2->right =temp->right;
 
-    print_array(array, 100);
+    }
+    
+    free(temp);
+    
+    
+    return;
+  }
+  if (root->right&&root->right->data == data) {
+    Node *temp = root->right;
+    root->right = (root->right->left!=NULL) ? root->right->left : root->right->right;
 
-    // int d = width_of_tree(root);
-    // printf("%d",d);
-    // int d = diameter(root);
-    // printf("%d",d);
+    Node* temp2 = root->right;
 
-    // int suc = successor(root);
-    // printf("%d", suc);
-    // root->right->data = 50;
-    printf("%d", valid_bst_using_inorder(root));
+    if(temp2){
+
+    while (temp2->right) {
+      temp2 = temp2->right;
+    
+    }
+    temp2->right =temp->right;
+    }
+
+    
+    free(temp);
+    
+    return;
+  }
+  delete_in_bst(root->left, data);
+  delete_in_bst(root->right, data);
+}
+
+int main() {
+  Node *root1 = create_bst();
+
+  // int total = total_elements(root1);
+  // int* pre = preorder(root1);
+  // print_array(pre, total);
+
+  // int* in = inorder(root1);
+  // print_array(in, total);
+  // int index = 0;
+  // Node* root2 = convert_to_binary_tree(pre, in, 0, total-1,&index);
+
+  // int c = compare(root1, root2);
+  // printf("%d",c);
+
+  int *in = inorder(root1);
+  print_array(in, total_elements(root1));
+
+  delete_in_bst(root1, 10);
+
+  in = inorder(root1);
+  print_array(in, total_elements(root1));
 }
