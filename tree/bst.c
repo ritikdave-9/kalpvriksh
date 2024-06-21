@@ -568,72 +568,303 @@ void delete_in_bst(Node *root, int data) {
   if (!root) {
     return;
   }
-  if (root->left&&root->left->data == data) {
+  if (root->left && root->left->data == data) {
     Node *temp = root->left;
-    root->left = (root->left->left!=NULL) ? root->left->left : root->left->right;
+    root->left =
+        (root->left->left != NULL) ? root->left->left : root->left->right;
 
-    Node* temp2 = root->left;
+    Node *temp2 = root->left;
 
+    if (temp2) {
+      while (temp2->right) {
+        temp2 = temp2->right;
+      }
 
-    if(temp2){
-    while (temp2->right) {
-      temp2 = temp2->right;
-    
+      temp2->right = temp->right;
     }
 
-    temp2->right =temp->right;
-
-    }
-    
     free(temp);
-    
-    
+
     return;
   }
-  if (root->right&&root->right->data == data) {
+  if (root->right && root->right->data == data) {
     Node *temp = root->right;
-    root->right = (root->right->left!=NULL) ? root->right->left : root->right->right;
+    root->right =
+        (root->right->left != NULL) ? root->right->left : root->right->right;
 
-    Node* temp2 = root->right;
+    Node *temp2 = root->right;
 
-    if(temp2){
+    if (temp2) {
 
-    while (temp2->right) {
-      temp2 = temp2->right;
-    
+      while (temp2->right) {
+        temp2 = temp2->right;
+      }
+      temp2->right = temp->right;
     }
-    temp2->right =temp->right;
-    }
 
-    
     free(temp);
-    
+
     return;
   }
   delete_in_bst(root->left, data);
   delete_in_bst(root->right, data);
 }
 
+void leftHD(Node *root, int *max, int current) {
+  if (!root) {
+    return;
+  }
+
+  if (current < *max) {
+    (*max)--;
+  }
+  leftHD(root->left, max, current - 1);
+
+  leftHD(root->right, max, current + 1);
+}
+
+void rightHD(Node *root, int *max, int current) {
+  if (!root) {
+    return;
+  }
+
+  if (current > *max) {
+    (*max)++;
+  }
+  rightHD(root->left, max, current - 1);
+  rightHD(root->right, max, current + 1);
+}
+
+int HDofTree(Node *root) {
+
+  int left = 0;
+
+  int right = 0;
+
+  leftHD(root, &left, 0);
+  rightHD(root, &right, 0);
+
+  return -left + right + 1;
+}
+
+void topViewUtils(Node *root, int left, int hd, int *arr) {
+  if (!root) {
+    return;
+  }
+
+  if (arr[hd - left] == 0) {
+
+    arr[hd - left] = root->data;
+  }
+  topViewUtils(root->right, left, hd + 1, arr);
+  topViewUtils(root->left, left, hd - 1, arr);
+}
+
+int *topView(Node *root) {
+
+  int left = 0;
+  int right = 0;
+
+  leftHD(root, &left, 0);
+  rightHD(root, &right, 0);
+
+  int *arr = (int *)calloc(right - left + 1, sizeof(int));
+
+  topViewUtils(root, left, 0, arr);
+
+  return arr;
+}
+
+void bottomvviewUtils(Node *root, int left, int hd, int *arr) {
+  if (!root) {
+    return;
+  }
+  arr[hd - left] = root->data;
+  bottomvviewUtils(root->right, left, hd + 1, arr);
+  bottomvviewUtils(root->left, left, hd - 1, arr);
+}
+
+int *bottomView(Node *root) {
+  int left = 0;
+  int right = 0;
+  int w = HDofTree(root);
+  leftHD(root, &left, 0);
+  rightHD(root, &right, 0);
+  int *arr = (int *)calloc(w, sizeof(int));
+
+  bottomvviewUtils(root, left, 0, arr);
+  return arr;
+}
+void left_boundry(Node *root, int *arr, int *index) {
+  if (!root) {
+    return;
+  }
+
+  if (root->left) {
+
+    arr[*index] = root->data;
+    (*index)++;
+    left_boundry(root->left, arr, index);
+
+  } else if (root->right) {
+    arr[*index] = root->data;
+    (*index)++;
+    left_boundry(root->right, arr, index);
+  }
+}
+
+void leafNodeTraversal(Node *root, int *arr, int *index) {
+  if (!root) {
+    return;
+  }
+  leafNodeTraversal(root->left, arr, index);
+  if (!root->left && !root->right) {
+    arr[*index] = root->data;
+    (*index)++;
+  }
+  leafNodeTraversal(root->right, arr, index);
+}
+
+void rightBoundryTraversal(Node *root, int *arr, int *index) {
+  if (!root) {
+    return;
+  }
+
+  if (root->right) {
+    rightBoundryTraversal(root->right, arr, index);
+    arr[*index] = root->data;
+    (*index)++;
+  } else if (root->left) {
+
+    rightBoundryTraversal(root->left, arr, index);
+    arr[*index] = root->data;
+    (*index)++;
+  }
+}
+
+int *boundryTraversal(Node *root) {
+  int w = HDofTree(root);
+  int *arr = (int *)calloc(2 * w, sizeof(int));
+  int index = 0;
+  arr[index] = root->data;
+  index++;
+
+  left_boundry(root->left, arr, &index);
+
+  // leafNodeTraversal(root->left, arr, &index);
+  leafNodeTraversal(root, arr, &index);
+
+  if (!root->right) {
+
+    rightBoundryTraversal(root->right, arr, &index);
+  } else {
+    rightBoundryTraversal(root, arr, &index);
+  }
+
+  return arr;
+}
+
+typedef struct DNode {
+  int data;
+  struct DNode *prev;
+  struct DNode *next;
+
+} DNode;
+
+DNode *createDNode(int data) {
+  DNode *new = (DNode *)malloc(sizeof(DNode));
+  new->data = data;
+  new->prev = NULL;
+  new->next = NULL;
+  return new;
+}
+Node *head = NULL, *tail = NULL;
+void TreeToDListUtils(Node *root) {
+  if (!root) {
+    return;
+  }
+
+  TreeToDListUtils(root->left);
+  Node *temp = root->right;
+  if (!head) {
+    head = tail = root;
+    root->left = root->right = NULL;
+  } else {
+    tail->right = root;
+    root->left = tail;
+    root->right = NULL;
+    tail = root->right;
+  }
+
+  TreeToDListUtils(temp);
+}
+
+void printDlist() {
+  Node *temp = head;
+  while (temp) {
+    printf("%d = ", temp->data);
+    temp = temp->right;
+  }
+}
+
+
+int bstfloor(Node*root, int data){
+  Node* temp = root;
+  int floor  = -1;
+  
+  while(temp){
+    if(temp->data==data){
+      return data;
+    }
+    if(temp->data>data){
+      temp = temp->left;
+    }
+    else {
+      floor= temp->data;
+      temp = temp->right;
+    }
+  }
+  return  floor;
+
+}
+
+int bstceil(Node*root, int data){
+  Node* temp = root;
+  int floor  = -1;
+  
+  while(temp){
+    if(temp->data==data){
+      return data;
+    }
+    if(temp->data<data){
+      temp = temp->right;
+    }
+    else {
+      floor= temp->data;
+      temp = temp->left;
+    }
+  }
+  return  floor;
+
+}
+
+int *florAndCeil(Node *root, int data) {
+  int *arr = (int *)malloc(sizeof(int)*2);
+
+  arr[0] = bstfloor(root, data);
+  arr[1] = bstceil(root, data);
+  return arr;
+  
+}
+
 int main() {
   Node *root1 = create_bst();
+  // int * ans = florAndCeil(root1, 4);
+  // print_array(ans,2);
 
-  // int total = total_elements(root1);
-  // int* pre = preorder(root1);
-  // print_array(pre, total);
+  int fl = bstfloor(root1, 12);
+  printf("%d ",fl);
+  int ce = bstceil(root1, 12);
+printf("%d",ce);
 
-  // int* in = inorder(root1);
-  // print_array(in, total);
-  // int index = 0;
-  // Node* root2 = convert_to_binary_tree(pre, in, 0, total-1,&index);
-
-  // int c = compare(root1, root2);
-  // printf("%d",c);
-
-  int *in = inorder(root1);
-  print_array(in, total_elements(root1));
-
-  delete_in_bst(root1, 10);
-
-  in = inorder(root1);
-  print_array(in, total_elements(root1));
 }
