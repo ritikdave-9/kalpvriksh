@@ -1,23 +1,20 @@
-check1.c
-solution1
-solution1.c
-tempCodeRunnerFile.c
-# Compiled object files
+# Ignore compiled object files
 *.o
 
-# Compiled dynamic libraries
+# Ignore compiled dynamic libraries
 *.so
 
-# Compiled static libraries
+# Ignore compiled static libraries
 *.a
 
-# Executable files
+# Ignore executable files
 *.out
 *.exe
+*.heap
 
-# Other binary files
+# Ignore any other binary files
 *.bin
 
-# Ignore specific build directories (if you have them)
+# Ignore specific build directories if you have them
 build/
 bin/
