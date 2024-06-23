@@ -55,46 +55,7 @@ int evaluate(node* root){
     }
 }
 
-// node* createTree(node* root,int value){
-//     if(!root){
-//         createNode(value);
-        
-//     }
 
-//     char res;
-
-//     printf("want to insert in left enter y/n:\n");
-//     scanf("%c",&res);
-
-//     if(res=='y'){
-//         char temp;
-//          scanf("%c",&temp);
-
-
-        
-//     }else{
-//         root->left= NULL;
-//     }
-//     res = '\0';
-
-//     printf("want to insert in right enter y/n:\n");
-
-//     if(res=='y'){
-//         root->right = createTree(root->right,value);
-//     }
-//     else{
-//         return NULL;
-//     }
-
-//     return root;
-
-
-    
-
-
-
-    
-// }
 
 
 int main(){

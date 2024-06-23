@@ -2,3 +2,22 @@ check1.c
 solution1
 solution1.c
 tempCodeRunnerFile.c
+# Compiled object files
+*.o
+
+# Compiled dynamic libraries
+*.so
+
+# Compiled static libraries
+*.a
+
+# Executable files
+*.out
+*.exe
+
+# Other binary files
+*.bin
+
+# Ignore specific build directories (if you have them)
+build/
+bin/
