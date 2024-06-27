@@ -1,2 +1,2 @@
-insert_max_heap(maxheap, deleteMinHeap(minheap));
-        insert_min_heap(minheap, data);
+char * str2 =(char*)malloc(10);
+    // str = str2;

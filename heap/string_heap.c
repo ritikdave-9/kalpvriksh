@@ -25,7 +25,9 @@ void swap(char** arr, int index1, int index2){
 
 }
 
-void insertHeap(heap* hp, char* str){
+void insertHeap(heap* hp,  char* str){
+    // char * str2 =(char*)malloc(10);
+    // str = str2;
     if(hp->index>=hp->size-1){
         printf("heap is full");
 
