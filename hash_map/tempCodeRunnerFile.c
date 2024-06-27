@@ -1,0 +1,1 @@
+hm->table[index] != DELETED
